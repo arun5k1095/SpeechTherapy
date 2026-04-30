@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}CalcPro — Modern Calculator{% endblock %}
+
+{% block content %}
+<div class="app-root">
+
+  <!-- ── Page header ── -->
+  <header class="page-header">
+    <div class="logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2"/>
+        <line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/>
+        <line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/>
+        <line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/>
+        <line x1="14" y1="18" x2="16" y2="18"/>
+      </svg>
+      <span>CalcPro</span>
+    </div>
+    <span class="page-tag">Modern Calculator</span>
+  </header>
+
+  <!-- ── Outer flex wrapper: calculator + history panel ── -->
+  <div class="calc-outer">
+
+    <!-- ══════════════════════════════════
+         CALCULATOR CARD
+    ══════════════════════════════════ -->
+    <div class="calculator" id="calculator">
+
+      <!-- Display -->
+      <div class="display">
+        <div class="display-meta">
+          <span class="angle-badge" id="angleBadge">DEG</span>
+          <span class="memory-badge" id="memoryBadge"></span>
+        </div>
+        <div class="expression" id="expression" aria-live="polite"></div>
+        <div class="result-row">
+          <div class="result" id="result">0</div>
+          <button class="copy-btn" id="copyBtn" title="Copy result" aria-label="Copy result">
+            <svg id="copyIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            <svg id="checkIcon" style="display:none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls bar -->
+      <div class="controls-bar">
+        <button class="ctrl-btn" id="modeToggle" title="Toggle scientific mode">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+          </svg>
+          Scientific
+        </button>
+        <button class="ctrl-btn" id="historyToggle" title="Toggle history">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          History
+        </button>
+      </div>
+
+      <!-- Memory bar -->
+      <div class="memory-bar">
+        <button class="mem-btn" data-action="mc" title="Memory Clear">MC</button>
+        <button class="mem-btn" data-action="mr" title="Memory Recall">MR</button>
+        <button class="mem-btn" data-action="m+" title="Memory Add">M+</button>
+        <button class="mem-btn" data-action="m-" title="Memory Subtract">M−</button>
+      </div>
+
+      <!-- Scientific panel (hidden by default) -->
+      <div class="sci-panel" id="sciPanel">
+        <div class="sci-grid">
+          <button class="sci-btn" data-sci="sin(" title="Sine">sin</button>
+          <button class="sci-btn" data-sci="cos(" title="Cosine">cos</button>
+          <button class="sci-btn" data-sci="tan(" title="Tangent">tan</button>
+          <button class="sci-btn deg-rad-btn" data-action="deg-rad" id="degRadBtn" title="Toggle degrees/radians">DEG</button>
+
+          <button class="sci-btn" data-sci="asin(" title="Arcsine">sin⁻¹</button>
+          <button class="sci-btn" data-sci="acos(" title="Arccosine">cos⁻¹</button>
+          <button class="sci-btn" data-sci="atan(" title="Arctangent">tan⁻¹</button>
+          <button class="sci-btn" data-sci="π" title="Pi constant">π</button>
+
+          <button class="sci-btn" data-sci="log(" title="Base-10 logarithm">log</button>
+          <button class="sci-btn" data-sci="ln(" title="Natural logarithm">ln</button>
+          <button class="sci-btn" data-sci="√(" title="Square root">√</button>
+          <button class="sci-btn" data-sci="e" title="Euler's number">e</button>
+
+          <button class="sci-btn" data-sci="**2" title="Square">x²</button>
+          <button class="sci-btn" data-sci="**3" title="Cube">x³</button>
+          <button class="sci-btn" data-sci="**" title="Power">xʸ</button>
+          <button class="sci-btn" data-sci="factorial(" title="Factorial">n!</button>
+        </div>
+      </div>
+
+      <!-- Main button grid -->
+      <div class="btn-grid">
+        <!-- Row 1 -->
+        <button class="btn fn-btn" data-action="ac" title="All Clear (Esc)">AC</button>
+        <button class="btn fn-btn" data-action="sign" title="Toggle sign">+/−</button>
+        <button class="btn fn-btn" data-action="percent" title="Percent (%)">%</button>
+        <button class="btn op-btn" data-op="÷" title="Divide (/)">÷</button>
+
+        <!-- Row 2 -->
+        <button class="btn num-btn" data-num="7">7</button>
+        <button class="btn num-btn" data-num="8">8</button>
+        <button class="btn num-btn" data-num="9">9</button>
+        <button class="btn op-btn" data-op="×" title="Multiply (*)">×</button>
+
+        <!-- Row 3 -->
+        <button class="btn num-btn" data-num="4">4</button>
+        <button class="btn num-btn" data-num="5">5</button>
+        <button class="btn num-btn" data-num="6">6</button>
+        <button class="btn op-btn" data-op="−" title="Subtract (-)">−</button>
+
+        <!-- Row 4 -->
+        <button class="btn num-btn" data-num="1">1</button>
+        <button class="btn num-btn" data-num="2">2</button>
+        <button class="btn num-btn" data-num="3">3</button>
+        <button class="btn op-btn" data-op="+" title="Add (+)">+</button>
+
+        <!-- Row 5 -->
+        <button class="btn back-btn" data-action="backspace" title="Backspace">⌫</button>
+        <button class="btn num-btn" data-num="0">0</button>
+        <button class="btn num-btn" data-num=".">.</button>
+        <button class="btn eq-btn" data-action="equals" title="Calculate (Enter)">=</button>
+      </div>
+
+      <!-- Keyboard hint -->
+      <p class="kb-hint">Keyboard supported · Ctrl+C to copy</p>
+    </div>
+
+    <!-- ══════════════════════════════════
+         HISTORY PANEL
+    ══════════════════════════════════ -->
+    <div class="history-panel" id="historyPanel" aria-label="Calculation history">
+      <div class="history-head">
+        <h3>History</h3>
+        <button class="clear-hist-btn" id="clearHistory" title="Clear all history">Clear all</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="hist-empty">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <p>No calculations yet</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.calc-outer -->
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+</div><!-- /.app-root -->
+{% endblock %}
