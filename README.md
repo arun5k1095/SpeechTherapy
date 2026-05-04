@@ -66,3 +66,16 @@ The calculator application ("CalcPro") provides:
 - **Backend**: Flask (Python web framework)
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Security**: AST-based safe evaluation to prevent code injection
+
+## GitHub Actions
+
+This repository now includes a GitHub Actions workflow at `.github/workflows/ci.yml`.
+
+- Runs on `push` and `pull_request` for `main`/`master`
+- Uses open-source actions: `actions/checkout`, `actions/setup-python`, `actions/cache`, `actions/upload-artifact`
+- Installs dependencies from `calculator/requirements.txt`
+- Performs Python syntax validation with `py_compile`
+- Generates a repository structure visualization file (`repo-structure.md`)
+- Uploads the visualization as a workflow artifact for easy inspection on GitHub
+
+> After the workflow runs, download `repo-structure` from the workflow summary to view the repository tree structure generated automatically.
