@@ -67,15 +67,12 @@ The calculator application ("CalcPro") provides:
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Security**: AST-based safe evaluation to prevent code injection
 
-## GitHub Actions
+## GitHub Actions Learning Workflows
 
-This repository now includes a GitHub Actions workflow at `.github/workflows/ci.yml`.
+This repository includes a few small workflows in `.github/workflows/` for learning how GitHub Actions runs work in the cloud.
 
-- Runs on `push` and `pull_request` for `main`/`master`
-- Uses open-source actions: `actions/checkout`, `actions/setup-python`, `actions/cache`, `actions/upload-artifact`
-- Installs dependencies from `calculator/requirements.txt`
-- Performs Python syntax validation with `py_compile`
-- Generates a repository structure visualization file (`repo-structure.md`)
-- Uploads the visualization as a workflow artifact for easy inspection on GitHub
+- `01 - Automatic Python CI` (`ci.yml`) runs on pushes, pull requests, and manual dispatch. It installs dependencies, validates Python syntax, runs unit tests on Python 3.11 and 3.12, and uploads a repository structure artifact.
+- `02 - Manual Cloud Lab` (`manual-cloud-lab.yml`) runs only when started from the GitHub Actions tab. It demonstrates manual inputs, environment variables, run summaries, and downloadable artifacts.
+- `03 - Scheduled Health Check` (`scheduled-health-check.yml`) runs every Monday at 03:30 UTC and can also be started manually. It demonstrates scheduled automation with a lightweight calculator smoke check.
 
-> After the workflow runs, download `repo-structure` from the workflow summary to view the repository tree structure generated automatically.
+To try them, push this repository to GitHub, open the **Actions** tab, choose a workflow, and use **Run workflow** for the manual examples.

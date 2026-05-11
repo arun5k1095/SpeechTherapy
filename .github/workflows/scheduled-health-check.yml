@@ -1,0 +1,57 @@
+name: 03 - Scheduled Health Check
+
+on:
+  schedule:
+    - cron: '30 3 * * 1'
+  workflow_dispatch:
+
+jobs:
+  weekly-health-check:
+    name: Check project health
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: calculator/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r calculator/requirements.txt
+
+      - name: Run calculator smoke check
+        env:
+          PYTHONPATH: calculator
+        run: |
+          python - <<'PY'
+          from app.routes.main import _safe_eval
+
+          checks = {
+              '2 + 2': 4,
+              'sqrt(16)': 4,
+              'sin(90 degrees)': 1,
+          }
+
+          assert _safe_eval('2 + 2') == checks['2 + 2']
+          assert _safe_eval('sqrt(16)') == checks['sqrt(16)']
+          assert round(_safe_eval('sin(90)', angle_unit='deg'), 8) == checks['sin(90 degrees)']
+          print('Calculator smoke checks passed.')
+          PY
+
+      - name: Write health summary
+        run: |
+          {
+            echo "## Scheduled Health Check"
+            echo ""
+            echo "- Trigger: $GITHUB_EVENT_NAME"
+            echo "- Branch: $GITHUB_REF_NAME"
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Result: calculator smoke checks passed"
+          } >> "$GITHUB_STEP_SUMMARY"
